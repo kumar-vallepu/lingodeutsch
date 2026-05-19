@@ -10,19 +10,22 @@ export function AuthLayout({
   return (
     <div className="relative min-h-screen">
       <Background />
-      <div className="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center px-6 py-10">
-        <Link to="/" className="mb-8"><Logo /></Link>
+      <div className="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center px-6 py-12">
+        <Link to="/" className="mb-9"><Logo /></Link>
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="glass-strong shadow-elegant w-full rounded-3xl p-7"
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="glass-strong border-gradient shadow-elegant relative w-full overflow-hidden rounded-3xl p-8"
         >
-          <h1 className="font-display text-2xl font-semibold">{title}</h1>
-          <p className="mt-1.5 text-sm text-muted-foreground">{subtitle}</p>
-          <div className="mt-6">{children}</div>
+          <div className="pointer-events-none absolute -top-24 -right-16 size-56 rounded-full bg-neon/15 blur-3xl" />
+          <div className="relative">
+            <h1 className="font-display text-2xl font-semibold tracking-tight sm:text-[26px]">{title}</h1>
+            <p className="mt-2 text-sm text-muted-foreground">{subtitle}</p>
+            <div className="mt-7">{children}</div>
+          </div>
         </motion.div>
-        {footer && <div className="mt-5 text-center text-sm text-muted-foreground">{footer}</div>}
+        {footer && <div className="mt-6 text-center text-sm text-muted-foreground">{footer}</div>}
       </div>
     </div>
   );
@@ -33,12 +36,12 @@ export function Field({
 }: { label: string; type?: string; placeholder?: string; name?: string }) {
   return (
     <label className="block">
-      <span className="text-xs font-medium text-muted-foreground">{label}</span>
+      <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
       <input
         type={type}
         name={name}
         placeholder={placeholder}
-        className="mt-1.5 w-full rounded-xl border border-glass-border bg-white/[0.03] px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none transition-all focus:border-neon/50 focus:bg-white/[0.05] focus:ring-2 focus:ring-neon/20"
+        className="mt-2 w-full rounded-xl border border-glass-border bg-white/[0.025] px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/55 outline-none transition-all duration-200 hover:bg-white/[0.04] focus:border-neon/60 focus:bg-white/[0.05] focus:ring-4 focus:ring-neon/15 focus:shadow-[0_0_0_1px_oklch(0.86_0.22_145/0.4),0_8px_28px_-12px_oklch(0.86_0.22_145/0.35)]"
       />
     </label>
   );
