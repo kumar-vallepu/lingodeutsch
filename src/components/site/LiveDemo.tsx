@@ -3,14 +3,14 @@ import { Mic, Volume2 } from "lucide-react";
 
 export function LiveDemo() {
   return (
-    <section className="relative mx-auto max-w-7xl px-6 py-24">
-      <div className="grid items-center gap-12 lg:grid-cols-2">
+    <section className="relative mx-auto max-w-7xl px-6 py-24 sm:py-32">
+      <div className="grid items-center gap-14 lg:grid-cols-2">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-neon">Live AI Demo</p>
-          <h2 className="mt-3 font-display text-4xl font-semibold sm:text-5xl">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-neon">Live AI Demo</p>
+          <h2 className="mt-4 font-display text-4xl font-semibold tracking-[-0.03em] sm:text-5xl lg:text-[3.5rem] lg:leading-[1.05]">
             Conversations that actually <span className="text-gradient-neon">teach you</span>.
           </h2>
-          <p className="mt-4 max-w-lg text-muted-foreground">
+          <p className="mt-5 max-w-lg text-base text-muted-foreground sm:text-lg">
             LinguaBuddy listens, corrects, translates, and explains — in real time. No flashcards. Just real, productive dialogue.
           </p>
           <ul className="mt-8 space-y-3 text-sm">
@@ -32,7 +32,7 @@ export function LiveDemo() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="glass-strong shadow-elegant rounded-3xl p-5"
+          className="glass-strong border-gradient shadow-elegant relative overflow-hidden rounded-3xl p-5"
         >
           <div className="flex items-center justify-between border-b border-glass-border pb-3">
             <div className="flex items-center gap-2.5">

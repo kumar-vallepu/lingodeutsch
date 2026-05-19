@@ -8,7 +8,7 @@ export function SiteShell({ children, hideFooter = false }: { children: ReactNod
     <div className="relative min-h-screen">
       <Background />
       <Navbar />
-      <main className="pt-24">{children}</main>
+      <main className="pt-28 sm:pt-32">{children}</main>
       {!hideFooter && <Footer />}
     </div>
   );

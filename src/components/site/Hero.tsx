@@ -4,56 +4,59 @@ import { Mic, Sparkles, ArrowRight, Play } from "lucide-react";
 
 export function Hero() {
   return (
-    <section className="relative mx-auto max-w-7xl px-6 pt-12 pb-24 md:pt-20">
-      <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_1fr]">
+    <section className="relative mx-auto max-w-7xl px-6 pt-10 pb-28 md:pt-20 md:pb-32">
+      <div className="grid items-center gap-14 lg:grid-cols-[1.1fr_1fr] lg:gap-10">
         <div>
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="glass inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs"
+            className="glass inline-flex items-center gap-2 rounded-full py-1.5 pl-2 pr-3 text-xs"
           >
-            <Sparkles className="size-3.5 text-neon" />
-            <span className="text-muted-foreground">AI-powered German tutoring</span>
-            <span className="ml-1 inline-flex items-center gap-1 rounded-full bg-neon/15 px-2 py-0.5 text-[10px] font-medium text-neon">
-              Beta
+            <span className="inline-flex items-center gap-1 rounded-full bg-neon/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-neon">
+              <Sparkles className="size-3" /> Beta
             </span>
+            <span className="text-muted-foreground">AI-powered German tutoring</span>
           </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.05 }}
-            className="mt-6 font-display text-5xl font-semibold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl"
+            transition={{ duration: 0.7, delay: 0.05 }}
+            className="mt-6 font-display text-[2.6rem] font-semibold leading-[1.02] tracking-[-0.035em] sm:text-6xl lg:text-[5rem]"
           >
-            Master <span className="text-gradient-neon">German</span> with Your AI Tutor.
+            <span className="text-gradient">Master </span>
+            <span className="text-gradient-neon">German</span>
+            <span className="text-gradient"> with your</span>
+            <br className="hidden sm:block" />
+            <span className="text-gradient"> AI tutor.</span>
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.15 }}
-            className="mt-6 max-w-xl text-lg text-muted-foreground"
+            className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg"
           >
-            Practice conversations, improve grammar, and build fluency using intelligent AI-powered learning — at your pace, your level, your voice.
+            Practice conversations, fix grammar, and build real fluency with an adaptive AI tutor — at your pace, your level, your voice.
           </motion.p>
 
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.25 }}
-            className="mt-8 flex flex-wrap items-center gap-3"
+            className="mt-9 flex flex-wrap items-center gap-3"
           >
             <Link
               to="/signup"
-              className="group inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-[0_0_40px_-8px_oklch(0.86_0.22_145/0.7)] transition-transform hover:scale-[1.02]"
+              className="group btn-primary-glow inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.02] active:scale-[0.98]"
             >
-              Start Learning
+              Start Learning Free
               <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
             <Link
               to="/chat"
-              className="glass inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-medium transition-colors hover:bg-white/5"
+              className="glass glass-hover inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-medium"
             >
               <Play className="size-4 text-neon" />
               Try Live Demo
@@ -64,14 +67,19 @@ export function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="mt-10 flex items-center gap-6 text-xs text-muted-foreground"
+            className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs text-muted-foreground"
           >
             <div className="flex items-center gap-2">
-              <div className="size-2 rounded-full bg-neon animate-pulse" />
+              <span className="relative flex size-2">
+                <span className="absolute inset-0 animate-ping rounded-full bg-neon/60" />
+                <span className="relative size-2 rounded-full bg-neon" />
+              </span>
               12,000+ active learners
             </div>
-            <div className="hidden sm:block">·</div>
-            <div className="hidden sm:block">A1 → C1 levels</div>
+            <span className="hidden sm:inline opacity-30">·</span>
+            <div>A1 → C1 levels</div>
+            <span className="hidden sm:inline opacity-30">·</span>
+            <div>No credit card required</div>
           </motion.div>
         </div>
 
@@ -118,8 +126,12 @@ function HeroPreview() {
         </div>
       </motion.div>
 
-      <div className="glass-strong shadow-elegant relative overflow-hidden rounded-3xl p-5">
-        <div className="flex items-center justify-between border-b border-glass-border pb-3">
+      <div className="glass-strong border-gradient shadow-elegant relative overflow-hidden rounded-3xl p-5">
+        {/* inner glow */}
+        <div className="pointer-events-none absolute -top-24 right-0 size-64 rounded-full bg-neon/15 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-24 -left-12 size-64 rounded-full bg-cyan/15 blur-3xl" />
+
+        <div className="relative flex items-center justify-between border-b border-glass-border pb-3">
           <div className="flex items-center gap-2.5">
             <div className="relative">
               <div className="grid size-9 place-items-center rounded-xl bg-gradient-to-br from-primary to-accent text-primary-foreground">
