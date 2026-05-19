@@ -19,7 +19,7 @@ function SignupPage() {
         <Field label="Password" type="password" placeholder="At least 8 characters" />
         <button
           type="submit"
-          className="w-full rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-[0_0_30px_-8px_oklch(0.86_0.22_145/0.7)] transition-transform hover:scale-[1.01]"
+          className="btn-primary-glow w-full rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.01] active:scale-[0.99]"
         >
           Create account
         </button>
