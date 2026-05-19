@@ -3,10 +3,10 @@ import { Flame, BookMarked, Target, TrendingUp, Zap, CheckCircle2 } from "lucide
 
 export function DashboardPreview() {
   return (
-    <section className="relative mx-auto max-w-7xl px-6 py-24">
+    <section className="relative mx-auto max-w-7xl px-6 py-24 sm:py-32">
       <div className="mx-auto max-w-2xl text-center">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-neon">Dashboard</p>
-        <h2 className="mt-3 font-display text-4xl font-semibold sm:text-5xl">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-neon">Dashboard</p>
+        <h2 className="mt-4 font-display text-4xl font-semibold tracking-[-0.03em] sm:text-5xl lg:text-[3.5rem] lg:leading-[1.05]">
           A learning command center built for <span className="text-gradient-neon">serious progress</span>.
         </h2>
       </div>
@@ -16,7 +16,7 @@ export function DashboardPreview() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className="glass-strong shadow-elegant relative mt-14 overflow-hidden rounded-3xl p-5 sm:p-8"
+        className="glass-strong border-gradient shadow-elegant relative mt-16 overflow-hidden rounded-3xl p-5 sm:p-8"
       >
         <div className="grid gap-4 md:grid-cols-3">
           <StatCard icon={Zap} label="XP Points" value="12,840" delta="+340 today" tone="neon" />
