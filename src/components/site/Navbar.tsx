@@ -26,43 +26,43 @@ export function Navbar() {
       initial={{ y: -24, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-4"
+      className="fixed inset-x-0 top-0 z-50 flex justify-center px-3 pt-3 sm:px-4 sm:pt-4"
     >
       <div
-        className={`flex w-full max-w-6xl items-center justify-between rounded-2xl px-4 py-3 transition-all duration-300 ${
+        className={`flex w-full max-w-6xl items-center justify-between rounded-2xl px-3 py-2.5 transition-all duration-500 sm:px-4 sm:py-3 ${
           scrolled ? "glass-strong shadow-elegant" : "glass"
         }`}
       >
         <Logo />
-        <nav className="hidden items-center gap-1 md:flex">
+        <nav className="hidden items-center gap-0.5 rounded-xl border border-glass-border bg-white/[0.02] p-1 md:flex">
           {links.map((l) => (
             <Link
               key={l.to}
               to={l.to as any}
-              className="rounded-lg px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
-              activeProps={{ className: "text-foreground" }}
+              className="rounded-lg px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-white/[0.06] hover:text-foreground"
+              activeProps={{ className: "bg-white/[0.06] text-foreground" }}
             >
               {l.label}
             </Link>
           ))}
         </nav>
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="hidden items-center gap-1 md:flex">
           <Link
             to="/login"
-            className="rounded-lg px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            className="rounded-lg px-3.5 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
             Login
           </Link>
           <Link
             to="/signup"
-            className="group relative inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-[0_0_30px_-5px_oklch(0.86_0.22_145/0.6)] transition-transform hover:scale-[1.02]"
+            className="group btn-primary-glow relative inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.02] active:scale-[0.98]"
           >
             Get Started
           </Link>
         </div>
         <button
           onClick={() => setOpen(!open)}
-          className="rounded-lg p-2 text-foreground md:hidden"
+          className="glass-hover grid size-9 place-items-center rounded-lg text-foreground md:hidden"
           aria-label="Toggle menu"
         >
           {open ? <X className="size-5" /> : <Menu className="size-5" />}
