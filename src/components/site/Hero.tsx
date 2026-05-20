@@ -16,7 +16,7 @@ export function Hero() {
             <span className="inline-flex items-center gap-1 rounded-full bg-neon/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-neon">
               <Sparkles className="size-3" /> Beta
             </span>
-            <span className="text-muted-foreground">AI-powered German tutoring</span>
+            <span className="text-muted-foreground">AI-Powered German Fluency</span>
           </motion.div>
 
           <motion.h1
