@@ -72,10 +72,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "LingoDeutsch — Master German with Your AI Tutor" },
-      { name: "description", content: "Practice conversations, improve grammar, and build fluency with LingoDeutsch, an AI-powered German tutor for serious learners." },
+      { title: "LingoDeutsch — AI-Powered German Fluency" },
+      { name: "description", content: "LingoDeutsch is an AI-powered German tutor. Practice conversations, fix grammar in real time, and build true fluency at your pace." },
       { name: "author", content: "LingoDeutsch" },
-      { property: "og:title", content: "LingoDeutsch — Master German with Your AI Tutor" },
+      { property: "og:title", content: "LingoDeutsch — AI-Powered German Fluency" },
       { property: "og:description", content: "AI-powered German learning. Voice conversations, real-time grammar correction, personalized tutoring." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
