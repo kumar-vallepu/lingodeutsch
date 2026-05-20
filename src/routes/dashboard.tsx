@@ -4,7 +4,7 @@ import { DashboardPreview } from "@/components/site/DashboardPreview";
 
 export const Route = createFileRoute("/dashboard")({
   component: DashboardPage,
-  head: () => ({ meta: [{ title: "Dashboard — LinguaBuddy" }, { name: "description", content: "Track your German fluency, streaks, XP, vocabulary and progress." }] }),
+  head: () => ({ meta: [{ title: "Dashboard — LingoDeutsch" }, { name: "description", content: "Track your German fluency, streaks, XP, vocabulary and progress." }] }),
 });
 
 function DashboardPage() {

@@ -8,7 +8,7 @@ export function Logo({ className = "" }: { className?: string }) {
         <span className="absolute inset-0 rounded-lg bg-gradient-to-tr from-transparent to-white/30 opacity-60 mix-blend-overlay" />
       </div>
       <span className="font-display text-[17px] font-semibold tracking-tight">
-        Lingua<span className="text-gradient-neon">Buddy</span>
+        Lingo<span className="text-gradient-neon">Deutsch</span>
       </span>
     </Link>
   );

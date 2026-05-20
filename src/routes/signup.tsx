@@ -3,7 +3,7 @@ import { AuthLayout, Field, GoogleButton } from "@/components/auth/AuthLayout";
 
 export const Route = createFileRoute("/signup")({
   component: SignupPage,
-  head: () => ({ meta: [{ title: "Sign up — LinguaBuddy" }, { name: "description", content: "Create your LinguaBuddy account and start learning German with AI." }] }),
+  head: () => ({ meta: [{ title: "Sign up — LingoDeutsch" }, { name: "description", content: "Create your LingoDeutsch account and start learning German with AI." }] }),
 });
 
 function SignupPage() {

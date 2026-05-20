@@ -11,7 +11,7 @@ export function LiveDemo() {
             Conversations that actually <span className="text-gradient-neon">teach you</span>.
           </h2>
           <p className="mt-5 max-w-lg text-base text-muted-foreground sm:text-lg">
-            LinguaBuddy listens, corrects, translates, and explains — in real time. No flashcards. Just real, productive dialogue.
+            LingoDeutsch listens, corrects, translates, and explains — in real time. No flashcards. Just real, productive dialogue.
           </p>
           <ul className="mt-8 space-y-3 text-sm">
             {[
