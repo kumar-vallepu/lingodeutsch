@@ -10,7 +10,7 @@ export function Footer() {
             <div className="md:col-span-2">
               <Logo />
               <p className="mt-4 max-w-sm text-sm text-muted-foreground">
-                The premium AI tutor that helps you master German through conversation, grammar coaching, and adaptive learning.
+                AI-Powered German Fluency. Master conversation, grammar, and vocabulary with an adaptive AI tutor built for serious learners.
               </p>
             </div>
             <div>
