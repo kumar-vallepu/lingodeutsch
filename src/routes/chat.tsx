@@ -7,7 +7,7 @@ import { Mic, Send, Volume2, Plus, MessageSquare, Sparkles, Settings, Languages,
 
 export const Route = createFileRoute("/chat")({
   component: ChatPage,
-  head: () => ({ meta: [{ title: "AI Tutor Chat — LinguaBuddy" }, { name: "description", content: "Chat with your German AI tutor. Voice, text, instant corrections and translations." }] }),
+  head: () => ({ meta: [{ title: "AI Tutor Chat — LingoDeutsch" }, { name: "description", content: "Chat with your German AI tutor. Voice, text, instant corrections and translations." }] }),
 });
 
 type Msg = { role: "user" | "ai"; content: any };
@@ -176,7 +176,7 @@ function ChatPage() {
               </button>
             </div>
             <p className="mt-2.5 text-center text-[11px] text-muted-foreground">
-              LinguaBuddy uses AI. Verify important translations.
+              LingoDeutsch uses AI. Verify important translations.
             </p>
           </div>
         </main>

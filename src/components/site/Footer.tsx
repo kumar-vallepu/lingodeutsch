@@ -36,9 +36,9 @@ export function Footer() {
             </div>
           </div>
           <div className="mt-8 flex flex-col items-start justify-between gap-3 border-t border-glass-border pt-6 text-xs text-muted-foreground md:flex-row md:items-center">
-            <p>© {new Date().getFullYear()} LinguaBuddy. Crafted for serious German learners.</p>
+            <p>© {new Date().getFullYear()} LingoDeutsch. Crafted for serious German learners.</p>
             <p className="max-w-md md:text-right">
-              AI disclaimer: LinguaBuddy uses generative AI. Responses may contain errors — always verify critical translations.
+              AI disclaimer: LingoDeutsch uses generative AI. Responses may contain errors — always verify critical translations.
             </p>
           </div>
         </div>

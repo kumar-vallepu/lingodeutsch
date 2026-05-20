@@ -3,7 +3,7 @@ import { AuthLayout, Field } from "@/components/auth/AuthLayout";
 
 export const Route = createFileRoute("/forgot-password")({
   component: ForgotPage,
-  head: () => ({ meta: [{ title: "Reset password — LinguaBuddy" }] }),
+  head: () => ({ meta: [{ title: "Reset password — LingoDeutsch" }] }),
 });
 
 function ForgotPage() {
