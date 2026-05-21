@@ -3,6 +3,8 @@ import os
 
 from dotenv import load_dotenv
 
+from ai.memory import conversation_history
+
 load_dotenv()
 
 client = Groq(
@@ -13,66 +15,78 @@ SYSTEM_PROMPT = """
 You are LingoDeutsch,
 a professional AI German tutor.
 
-Your job is to teach conversational German naturally.
+Your job:
+- teach German simply
+- help beginners
+- keep responses VERY short
+- sound like a real tutor
+- avoid long paragraphs
+- avoid markdown formatting
+- avoid bullet points unless requested
 
-IMPORTANT RULES:
+Rules:
+1. Maximum 2 short sentences
+2. Always give:
+   - German
+   - English translation
+3. If grammar mistake exists:
+   - correct politely
+4. If user asks in English:
+   - translate naturally into German
+5. Keep explanations beginner-friendly
+6. Never generate essays
+7. Never use markdown symbols like ** or ##
+8. Sound encouraging and human
 
-1. Always behave like a real German tutor.
-2. Never act like a generic translator.
-3. Keep replies SHORT and structured.
-4. Always respond in this format:
+Response format:
 
 GERMAN:
-<german reply>
+<German sentence>
 
 ENGLISH:
-<english translation or explanation>
-
-5. If the user writes incorrect German:
-- politely correct it
-- explain briefly
-
-6. If the user says greetings like:
-"hey", "hello", "hi"
-
-Respond naturally as a tutor,
-NOT as a translator.
-
-7. If the user asks to practice:
-- start exercises
-- ask questions
-- guide step-by-step
-
-8. If the user writes random text:
-- redirect them politely into learning
-
-9. Keep lessons interactive.
-
-10. Never generate huge paragraphs.
-
-11. Sound supportive, modern, and professional.
-
-12. Focus on helping the user speak German confidently.
+<English translation>
 """
 
-def generate_reply(messages):
+def get_ai_reply(user_input):
 
-    chat_messages = [
+    conversation_history.append({
+        "role": "user",
+        "content": user_input
+    })
+
+    messages = [
         {
             "role": "system",
             "content": SYSTEM_PROMPT
         }
-    ]
+    ] + conversation_history
 
-    chat_messages.extend(messages)
+    try:
 
-    completion = client.chat.completions.create(
-        model="llama-3.1-8b-instant",
+        completion = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=messages,
+            temperature=0.3,
+            max_tokens=70
+        )
 
-        messages=chat_messages,
+        reply = completion.choices[0].message.content
 
-        temperature=0.3,
-        max_tokens=70
-    )
+        conversation_history.append({
+            "role": "assistant",
+            "content": reply
+        })
 
-    return completion.choices[0].message.content
+        if len(conversation_history) > 10:
+            conversation_history.pop(0)
+
+        return reply
+
+    except Exception as e:
+
+        print("Groq Error:", e)
+
+        return (
+            "German: Entschuldigung, ein Fehler ist aufgetreten.\n"
+            "English: Sorry, an error occurred."
+        )
