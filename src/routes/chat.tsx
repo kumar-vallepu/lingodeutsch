@@ -33,25 +33,122 @@ function ChatPage() {
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, typing]);
 
-  const send = () => {
+  const send = async () => {
+    if (typing) return;
+
     if (!input.trim()) return;
-    const text = input.trim();
-    setMessages((m) => [...m, { role: "user", content: text }]);
-    setInput("");
     setTyping(true);
+  const text = input.trim();
+
+  setMessages((m) => [
+    ...m,
+    {
+      role: "user",
+      content: text,
+    },
+  ]);
+
+  setInput("");
+
+  
+
+  try {
+
+    const response = await fetch(
+      "http://127.0.0.1:8000/chat",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({
+  messages: messages.map((m) => ({
+    role: m.role === "ai" ? "assistant" : "user",
+
+    content:
+      typeof m.content === "string"
+        ? m.content
+        : `GERMAN: ${m.content.de || ""}
+
+    ENGLISH: ${m.content.en || ""}`,
+  })).concat([
+    {
+      role: "user",
+      content: text,
+    },
+  ]),
+}),
+      }
+    );
+
+    const data = await response.json();
+
+    const reply = data.reply;
+
+    let german = "";
+    let english = "";
+
+    if (reply.includes("ENGLISH:")) {
+
+      german = reply
+        .split("ENGLISH:")[0]
+        .replace("GERMAN:", "")
+        .trim();
+
+      english = reply
+        .split("ENGLISH:")[1]
+        .trim();
+
+    } else {
+
+      german = reply;
+    }
+
+    setMessages((m) => [
+      ...m,
+      {
+        role: "ai",
+        
+
+        content: {
+          de: german,
+          en: english,
+        },
+      },
+    ]);
     setTimeout(() => {
-      setTyping(false);
-      setMessages((m) => [
-        ...m,
-        { role: "ai", content: { de: "Sehr gut! Versuchen wir es nochmal.", en: "Very good! Let's try again." } },
-      ]);
-    }, 1100);
-  };
+      inputRef.current?.focus();
+    }, 0);
+
+  } catch (error) {
+
+    console.error(error);
+
+    setMessages((m) => [
+      ...m,
+      {
+        role: "ai",
+
+        content: {
+          de: "Es gibt ein Problem.",
+          en: "There is a problem connecting to the server.",
+        },
+      },
+    ]);
+
+  } finally {
+
+    setTyping(false);
+  }
+};
 
   return (
     <div className="relative min-h-screen">
@@ -161,16 +258,17 @@ function ChatPage() {
                 <Mic className="size-4" />
               </button>
               <input
+                ref={inputRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && send()}
                 placeholder="Schreib auf Deutsch oder Englisch…"
-                className="flex-1 bg-transparent px-2 text-sm outline-none placeholder:text-muted-foreground/60"
+                className="flex-1 bg-transparent px-2 text-sm outline-none placeholder:text-muted-foreground/60 disabled:opacity-50"
               />
               <button
                 onClick={send}
-                disabled={!input.trim()}
-                className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary text-primary-foreground transition-all hover:scale-[1.05] active:scale-95 disabled:opacity-40 disabled:hover:scale-100"
+                disabled={!input.trim() || typing}
+                className="rounded-full bg-primary p-3 text-primary-foreground transition hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 disabled:opacity-40 disabled:hover:scale-100"
               >
                 <Send className="size-4" />
               </button>
