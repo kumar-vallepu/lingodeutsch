@@ -32,6 +32,7 @@ function ChatPage() {
   const [messages, setMessages] = useState<Msg[]>(initial);
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
+  const [listening, setListening] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -39,24 +40,38 @@ function ChatPage() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, typing]);
 
-  const send = async () => {
-    if (typing) return;
+const send = async () => {
 
-    if (!input.trim()) return;
-    setTyping(true);
+  if (typing) return;
+
+  if (!input.trim()) return;
+
+  setTyping(true);
+
   const text = input.trim();
 
   setMessages((m) => [
+    
     ...m,
+    
+    {
+      role: "user",
+      content: text,
+    },
+  ]);
+  
+  setMessages((m) => [
+    
+    ...m,
+    
     {
       role: "user",
       content: text,
     },
   ]);
 
-  setInput("");
 
-  
+  setInput("");
 
   try {
 
@@ -70,22 +85,22 @@ function ChatPage() {
         },
 
         body: JSON.stringify({
-  messages: messages.map((m) => ({
-    role: m.role === "ai" ? "assistant" : "user",
+          messages: messages.map((m) => ({
+            role: m.role === "ai" ? "assistant" : "user",
 
-    content:
-      typeof m.content === "string"
-        ? m.content
-        : `GERMAN: ${m.content.de || ""}
+            content:
+              typeof m.content === "string"
+                ? m.content
+                : `GERMAN: ${m.content.de || ""}
 
-    ENGLISH: ${m.content.en || ""}`,
-  })).concat([
-    {
-      role: "user",
-      content: text,
-    },
-  ]),
-}),
+ENGLISH: ${m.content.en || ""}`,
+          })).concat([
+            {
+              role: "user",
+              content: text,
+            },
+          ]),
+        }),
       }
     );
 
@@ -116,7 +131,6 @@ function ChatPage() {
       ...m,
       {
         role: "ai",
-        
 
         content: {
           de: german,
@@ -124,6 +138,7 @@ function ChatPage() {
         },
       },
     ]);
+    speakText(german);
     setTimeout(() => {
       inputRef.current?.focus();
     }, 0);
@@ -150,7 +165,68 @@ function ChatPage() {
   }
 };
 
-  return (
+const startListening = () => {
+
+  const SpeechRecognition =
+    (window as any).SpeechRecognition ||
+    (window as any).webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+
+    alert("Speech Recognition not supported");
+
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+
+  recognition.lang = "de-DE";
+
+  recognition.interimResults = false;
+  recognition.continuous = false;
+
+  recognition.maxAlternatives = 1;
+
+  setListening(true);
+
+  recognition.start();
+
+  recognition.onresult = (event: any) => {
+
+    const transcript =
+      event.results[0][0].transcript;
+
+    setInput(transcript);
+
+    setListening(false);
+  };
+
+  recognition.onerror = () => {
+
+    setListening(false);
+  };
+
+  recognition.onend = () => {
+
+    setListening(false);
+  };
+};
+
+const speakText = (text: string) => {
+
+  const speech = new SpeechSynthesisUtterance(text);
+
+  speech.lang = "de-DE";
+
+  speech.rate = 0.95;
+
+  speech.pitch = 1;
+
+  speech.volume = 1;
+
+  window.speechSynthesis.speak(speech);
+};
+return (
     <div className="relative min-h-screen">
       <Background />
       <div className="relative mx-auto flex h-screen max-w-[1480px] gap-4 p-3 sm:p-4">
@@ -254,7 +330,14 @@ function ChatPage() {
 
           <div className="relative border-t border-glass-border p-3 sm:p-4">
             <div className="group flex items-center gap-2 rounded-2xl border border-glass-border bg-white/[0.025] p-2 transition-all focus-within:border-neon/40 focus-within:bg-white/[0.04] focus-within:shadow-[0_0_0_4px_oklch(0.86_0.22_145/0.10)]">
-              <button className="relative grid size-10 shrink-0 place-items-center rounded-xl bg-primary text-primary-foreground animate-pulse-ring transition-transform active:scale-95">
+             <button
+                onClick={startListening}
+                className={`relative grid size-10 shrink-0 place-items-center rounded-xl transition-transform active:scale-95 ${
+                  listening
+                    ? "bg-red-500 text-white animate-pulse"
+                    : "bg-primary text-primary-foreground animate-pulse-ring"
+                }`}
+              >
                 <Mic className="size-4" />
               </button>
               <input
