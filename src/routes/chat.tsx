@@ -253,7 +253,7 @@ const startListening = () => {
 };
 
 const speakText = (text: string) => {
-
+ window.speechSynthesis.cancel();
   const speech = new SpeechSynthesisUtterance(text);
 
   speech.lang = "de-DE";
