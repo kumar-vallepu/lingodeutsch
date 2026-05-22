@@ -27,7 +27,9 @@ def chat(request: ChatRequest):
         for msg in request.messages
     ]
 
-    reply = generate_reply(messages)
+    last_message = request.messages[-1].content
+
+    reply = generate_reply(last_message)
 
     return {
         "reply": reply

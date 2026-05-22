@@ -47,7 +47,7 @@ ENGLISH:
 <English translation>
 """
 
-def get_ai_reply(user_input):
+def generate_reply(user_input):
 
     conversation_history.append({
         "role": "user",

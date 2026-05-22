@@ -5,7 +5,7 @@ import os
 
 from playsound import playsound
 
-from config import VOICE
+from LingoDeutsch.lingodeutsch.backend.config import VOICE
 
 async def speak(text):
 
