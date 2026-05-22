@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, ChangeEvent } from "react";
 import { Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import { Background } from "@/components/site/Background";
@@ -32,15 +32,39 @@ export function AuthLayout({
 }
 
 export function Field({
-  label, type = "text", placeholder, name,
-}: { label: string; type?: string; placeholder?: string; name?: string }) {
+  label,
+  type = "text",
+  placeholder,
+  name,
+  value,
+  onChange,
+}: {
+  label: string;
+
+  type?: string;
+
+  placeholder?: string;
+
+  name?: string;
+
+  value?: string;
+
+  onChange?: (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => void;
+}) {
   return (
     <label className="block">
-      <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
+      <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+        {label}
+      </span>
+
       <input
         type={type}
         name={name}
         placeholder={placeholder}
+        value={value}
+        onChange={onChange}
         className="mt-2 w-full rounded-xl border border-glass-border bg-white/[0.025] px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/55 outline-none transition-all duration-200 hover:bg-white/[0.04] focus:border-neon/60 focus:bg-white/[0.05] focus:ring-4 focus:ring-neon/15 focus:shadow-[0_0_0_1px_oklch(0.86_0.22_145/0.4),0_8px_28px_-12px_oklch(0.86_0.22_145/0.35)]"
       />
     </label>
