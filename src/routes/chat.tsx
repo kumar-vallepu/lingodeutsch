@@ -60,15 +60,6 @@ const send = async () => {
     },
   ]);
   
-  setMessages((m) => [
-    
-    ...m,
-    
-    {
-      role: "user",
-      content: text,
-    },
-  ]);
 
 
   setInput("");
@@ -338,13 +329,21 @@ return (
                     : "bg-primary text-primary-foreground animate-pulse-ring"
                 }`}
               >
-                <Mic className="size-4" />
+                <Mic className="size-5`     " />
               </button>
               <input
                 ref={inputRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && send()}
+                onKeyDown={(e) => {
+
+                  if (e.key === "Enter") {
+
+                    e.preventDefault();
+
+                    send();
+  }
+}}
                 placeholder="Schreib auf Deutsch oder Englisch…"
                 className="flex-1 bg-transparent px-2 text-sm outline-none placeholder:text-muted-foreground/60 disabled:opacity-50"
               />
