@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from "motion/react";
 import { Background } from "@/components/site/Background";
 import { Logo } from "@/components/site/Logo";
 import { Mic, Send, Volume2, Plus, MessageSquare, Sparkles, Settings, Languages, BookOpen } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
+import { supabase } from "@/lib/supabase";
 
 export const Route = createFileRoute("/chat")({
   component: ChatPage,
@@ -33,12 +35,59 @@ function ChatPage() {
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
   const [listening, setListening] = useState(false);
+  const [username, setUsername] = useState("");
+  const [fullName, setFullName] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, typing]);
+  useEffect(() => {
+  scrollRef.current?.scrollTo({
+    top: scrollRef.current.scrollHeight,
+    behavior: "smooth"
+  });
+}, [messages, typing]);
+
+  useEffect(() => {
+
+  const checkUser = async () => {
+
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session) {
+
+      window.location.href = "/login";
+
+      return;
+    }
+
+    if (session.user.email) {
+
+      const fullName =
+  session.user.user_metadata.full_name;
+
+if (fullName) {
+
+  setUsername(fullName);
+
+} else {
+
+  const fallback =
+    session.user.email?.split("@")[0] || "User";
+
+  setUsername(fallback);
+}
+    }
+  };
+
+  checkUser();
+
+}, []);
 
 const send = async () => {
 
@@ -248,7 +297,9 @@ return (
             <div className="flex items-center gap-2.5">
               <div className="grid size-9 place-items-center rounded-lg bg-gradient-to-br from-primary to-accent text-primary-foreground text-xs font-bold ring-1 ring-white/20">A</div>
               <div className="flex-1 min-w-0">
-                <p className="truncate text-sm font-semibold">Anna Müller</p>
+                <p className="truncate text-sm font-semibold">
+  {username || "User"}
+</p>
                 <p className="flex items-center gap-1 text-[10px] text-muted-foreground">
                   <span className="size-1.5 rounded-full bg-neon animate-pulse" /> B1 · 14 day streak
                 </p>
