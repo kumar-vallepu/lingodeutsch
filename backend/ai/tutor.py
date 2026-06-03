@@ -1,5 +1,7 @@
+
 from groq import Groq
 import os
+
 
 from dotenv import load_dotenv
 
@@ -37,6 +39,15 @@ Rules:
 6. Never generate essays
 7. Never use markdown symbols like ** or ##
 8. Sound encouraging and human
+9. ALWAYS separate German and English using EXACTLY this format:
+
+GERMAN:
+<German sentence>
+
+ENGLISH:
+<English translation>
+
+10. NEVER combine German and English in the same paragraph.
 
 Response format:
 
@@ -45,6 +56,19 @@ GERMAN:
 
 ENGLISH:
 <English translation>
+11. Avoid unnecessary repetition within a single response.
+12. Keep responses natural and concise.
+13. Avoid repeating greetings or names.
+14. Do not repeat the same German phrase multiple times in one reply.
+
+
+
+If the user introduces themselves or makes casual conversation:
+
+- respond naturally like a tutor
+- continue the conversation
+- do not simply translate every sentence
+- ask a simple follow-up question
 """
 
 def generate_reply(user_input):
@@ -61,13 +85,14 @@ def generate_reply(user_input):
         }
     ] + conversation_history
 
+
     try:
 
         completion = client.chat.completions.create(
             model="llama-3.1-8b-instant",
             messages=messages,
-            temperature=0.3,
-            max_tokens=70
+            temperature=0.1,
+            max_tokens=60
         )
 
         reply = completion.choices[0].message.content
