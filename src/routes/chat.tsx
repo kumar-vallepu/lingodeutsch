@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Background } from "@/components/site/Background";
@@ -319,6 +319,14 @@ return (
 
   className="mt-3 w-full rounded-xl border border-glass-border bg-white/[0.03] px-4 py-2 text-sm text-muted-foreground transition hover:bg-white/[0.06] hover:text-white"
 >
+  <button
+  onClick={() => {
+    window.location.href = "/flashcards";
+  }}
+  className="w-full rounded-xl border border-glass-border bg-white/[0.03] px-4 py-2 text-sm text-muted-foreground transition hover:bg-white/[0.06] hover:text-white"
+>
+  📚 Flashcards
+</button>
   Logout
 </button>
           </div>
@@ -428,7 +436,6 @@ return (
     </div>
   );
 }
-
 function ChatMsg({ msg }: { msg: Msg }) {
 const saveFlashcard = async () => {
 
