@@ -6,6 +6,7 @@ import { Logo } from "@/components/site/Logo";
 import { Mic, Send, Volume2, Plus, MessageSquare, Sparkles, Settings, Languages, BookOpen } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/chat")({
   component: ChatPage,
@@ -116,7 +117,7 @@ const send = async () => {
   try {
 
     const response = await fetch(
-      "http://127.0.0.1:8000/chat",
+      `${import.meta.env.VITE_API_URL}/chat`,
       {
         method: "POST",
 
@@ -308,6 +309,18 @@ return (
                 <Settings className="size-4" />
               </button>
             </div>
+            <button
+  onClick={async () => {
+
+    await supabase.auth.signOut();
+
+    window.location.href = "/login";
+  }}
+
+  className="mt-3 w-full rounded-xl border border-glass-border bg-white/[0.03] px-4 py-2 text-sm text-muted-foreground transition hover:bg-white/[0.06] hover:text-white"
+>
+  Logout
+</button>
           </div>
         </aside>
 
@@ -380,7 +393,7 @@ return (
                     : "bg-primary text-primary-foreground animate-pulse-ring"
                 }`}
               >
-                <Mic className="size-5`     " />
+                <Mic className="size-4`     " />
               </button>
               <input
                 ref={inputRef}
@@ -417,6 +430,46 @@ return (
 }
 
 function ChatMsg({ msg }: { msg: Msg }) {
+const saveFlashcard = async () => {
+
+  if (
+    typeof msg.content === "string" ||
+    !msg.content.de ||
+    !msg.content.en
+  ) {
+    return;
+  }
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return;
+
+  const { error } = await supabase
+    .from("vocabulary")
+    .insert([
+      {
+        user_id: user.id,
+        german: msg.content.de,
+        english: msg.content.en,
+      },
+    ]);
+
+  if (error) {
+
+    console.error(error);
+
+    toast.error("Failed to save flashcard");
+
+    return;
+  }
+
+ toast.success("🇩🇪 Added to Vocabulary", {
+  description: "Review it anytime from your flashcards",
+});
+};
+
   const isUser = msg.role === "user";
   return (
     <motion.div
@@ -445,22 +498,24 @@ function ChatMsg({ msg }: { msg: Msg }) {
               </div>
             )}
             {msg.content.de && (
-              <div>
-                <p className="mb-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">German</p>
-                <p className="font-display text-[15px] font-medium leading-snug">{msg.content.de}</p>
-              </div>
-            )}
-            {msg.content.en && (
-              <div>
-                <p className="mb-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">English</p>
-                <p className="text-foreground/75">{msg.content.en}</p>
-              </div>
-            )}
-            {msg.content.tip && (
-              <p className="mt-2 rounded-lg border border-glass-border bg-white/[0.03] px-2.5 py-2 text-[11px] leading-relaxed text-muted-foreground">
-                💡 {msg.content.tip}
-              </p>
-            )}
+  <p className="font-display text-[16px] font-medium leading-relaxed">
+    {msg.content.de}
+  </p>
+)}
+{msg.content.en && (
+  <>
+    <p className="mt-2 text-sm leading-relaxed text-foreground/70">
+      {msg.content.en}
+    </p>
+
+    <button
+  onClick={saveFlashcard}
+  className="mt-2 rounded-lg border border-glass-border px-3 py-1.5 text-xs text-muted-foreground hover:bg-white/5"
+>
+  📚 Add to Vocabulary
+</button>
+  </>
+)}
           </div>
         )}
       </div>
