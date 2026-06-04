@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
+import { motion, AnimatePresence } from "framer-motion";
 
 export const Route = createFileRoute("/flashcards")({
   component: FlashcardsPage,
@@ -128,24 +129,38 @@ const speakGerman = () => {
   <div
   className="
     glass-strong
+
     mb-8
     rounded-[32px]
     border
     border-neon/20
     p-10
     text-center
-    shadow-[0_0_60px_-20px_oklch(0.86_0.22_145/0.25)]
+    hover:shadow-[0_0_80px_-20px_oklch(0.86_0.22_145/0.35)]
+transition-all
+duration-500
   "
 >
     <p className="mb-2 text-sm text-muted-foreground">
       Card {currentIndex + 1} / {cards.length}
     </p>
 
+   <AnimatePresence mode="wait">
+  <motion.div
+    key={showAnswer ? "english" : "german"}
+    initial={{ opacity: 0, rotateX: -90 }}
+    animate={{ opacity: 1, rotateX: 0 }}
+    exit={{ opacity: 0, rotateX: 90 }}
+    transition={{ duration: 0.35 }}
+    className="perspective-1000"
+  >
     <p className="font-display text-3xl font-bold">
       {showAnswer
         ? currentCard?.english
         : currentCard?.german}
     </p>
+  </motion.div>
+</AnimatePresence>
 
     <div className="mt-6 flex items-center justify-center gap-3">
       <button
@@ -176,7 +191,17 @@ const speakGerman = () => {
 
   <button
     onClick={() => setShowAnswer(!showAnswer)}
-    className="rounded-xl bg-primary px-5 py-2 text-primary-foreground"
+    className="
+rounded-xl
+bg-primary
+px-5
+py-2
+text-primary-foreground
+transition-all
+duration-300
+hover:scale-105
+hover:shadow-[0_0_30px_-10px_oklch(0.86_0.22_145/0.5)]
+"
   >
     {showAnswer
       ? "Show German"
