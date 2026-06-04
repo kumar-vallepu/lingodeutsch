@@ -19,6 +19,20 @@ function FlashcardsPage() {
 const [showAnswer, setShowAnswer] = useState(false);
 const currentCard = cards[currentIndex];
 
+const speakGerman = () => {
+  if (!currentCard?.german) return;
+
+  window.speechSynthesis.cancel();
+
+  const speech = new SpeechSynthesisUtterance(
+    currentCard.german
+  );
+
+  speech.lang = "de-DE";
+  speech.rate = 0.9;
+
+  window.speechSynthesis.speak(speech);
+};
   useEffect(() => {
     loadCards();
   }, []);
@@ -65,6 +79,7 @@ const currentCard = cards[currentIndex];
     </p>
 
     <div className="mt-6 flex items-center justify-center gap-3">
+      
 
   <button
     onClick={() => {
@@ -77,6 +92,12 @@ const currentCard = cards[currentIndex];
   >
     ← Previous
   </button>
+<button
+  onClick={speakGerman}
+  className="rounded-xl border border-neon/20 px-4 py-2 hover:bg-white/5"
+>
+  🔊 Listen
+</button>
 
   <button
     onClick={() => setShowAnswer(!showAnswer)}
