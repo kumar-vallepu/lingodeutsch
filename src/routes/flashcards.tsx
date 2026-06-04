@@ -130,59 +130,13 @@ const currentCard = cards[currentIndex];
     </p>
 
     <p className="mt-2 text-3xl font-bold">
-      {Math.round(((currentIndex + 1) / cards.length) * 100)}%
+      {cards.length > 0
+  ? Math.round(((currentIndex + 1) / cards.length) * 100)
+  : 0}%
     </p>
+  </div>
   </div>
 
 </div>
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <div className="space-y-4">
-          {cards.map((card) => (
-            <div
-  className="
-  group
-  glass
-  rounded-3xl
-  border
-  border-glass-border
-  p-6
-  transition-all
-  duration-300
-  hover:border-neon/30
-  hover:shadow-[0_0_30px_-10px_oklch(0.86_0.22_145/0.35)]
-  hover:-translate-y-1
-"
->
-            
-            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-  <div>
-    <p className="mb-1 text-xs uppercase tracking-widest text-neon">
-      German
-    </p>
-
-    <p className="font-display text-2xl font-bold tracking-tight">
-      {card.german}
-    </p>
-  </div>
-
-  <div className="h-px bg-glass-border" />
-
-  <div>
-    <p className="mb-1 text-xs uppercase tracking-widest text-muted-foreground">
-      English
-    </p>
-
-    <p className="text-base text-foreground/70">
-      {card.english}
-    </p>
-  </div>
-</div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}   
+);
+}
