@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/flashcards")({
   component: FlashcardsPage,
@@ -19,6 +20,47 @@ function FlashcardsPage() {
 const [showAnswer, setShowAnswer] = useState(false);
 const currentCard = cards[currentIndex];
 
+const deleteFlashcard = async () => {
+  if (!currentCard) return;
+
+  console.log("Current Card:", currentCard);
+console.log("Deleting card:", currentCard);
+  const { data, error } = await supabase
+ 
+  .from("vocabulary")
+  
+  .delete()
+  
+  .eq("id", currentCard.id)
+  .select();
+
+console.log("Deleted:", data);
+console.log("Error:", error);
+
+console.log("Delete error:", error);
+
+  if (error) {
+   console.error(error);
+
+toast.error("Delete Failed", {
+  description: "Could not remove flashcard",
+});
+
+return;
+  }
+
+  setCards((prev) =>
+    prev.filter(
+      (card) => card.id !== currentCard.id
+    )
+  );
+
+  setCurrentIndex(0);
+  toast.success("🗑 Flashcard Deleted", {
+  description: "Removed from your vocabulary",
+});
+};
+
 const speakGerman = () => {
   if (!currentCard?.german) return;
 
@@ -33,6 +75,7 @@ const speakGerman = () => {
 
   window.speechSynthesis.speak(speech);
 };
+
   useEffect(() => {
     loadCards();
   }, []);
@@ -79,6 +122,12 @@ const speakGerman = () => {
     </p>
 
     <div className="mt-6 flex items-center justify-center gap-3">
+      <button
+  onClick={deleteFlashcard}
+  className="rounded-xl border border-red-500/20 px-4 py-2 text-red-400 hover:bg-red-500/10"
+>
+  🗑 Delete
+</button>
       
 
   <button
