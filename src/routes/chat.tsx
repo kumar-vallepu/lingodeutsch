@@ -309,26 +309,26 @@ return (
                 <Settings className="size-4" />
               </button>
             </div>
-            <button
-  onClick={async () => {
-
-    await supabase.auth.signOut();
-
-    window.location.href = "/login";
-  }}
-
-  className="mt-3 w-full rounded-xl border border-glass-border bg-white/[0.03] px-4 py-2 text-sm text-muted-foreground transition hover:bg-white/[0.06] hover:text-white"
->
+           <div className="mt-3 space-y-2">
   <button
-  onClick={() => {
-    window.location.href = "/flashcards";
-  }}
-  className="w-full rounded-xl border border-glass-border bg-white/[0.03] px-4 py-2 text-sm text-muted-foreground transition hover:bg-white/[0.06] hover:text-white"
->
-  📚 Flashcards
-</button>
-  Logout
-</button>
+    onClick={() => {
+      window.location.href = "/flashcards";
+    }}
+    className="w-full rounded-xl border border-glass-border bg-white/[0.03] px-4 py-2 text-sm text-muted-foreground transition hover:bg-white/[0.06] hover:text-white"
+  >
+    📚 Flashcards
+  </button>
+
+  <button
+    onClick={async () => {
+      await supabase.auth.signOut();
+      window.location.href = "/login";
+    }}
+    className="w-full rounded-xl border border-glass-border bg-white/[0.03] px-4 py-2 text-sm text-muted-foreground transition hover:bg-white/[0.06] hover:text-white"
+  >
+    Logout
+  </button>
+</div>
           </div>
         </aside>
 

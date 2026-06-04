@@ -18,7 +18,15 @@ function FlashcardsPage() {
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
 const [showAnswer, setShowAnswer] = useState(false);
-const currentCard = cards[currentIndex];
+const [search, setSearch] = useState("");
+const filteredCards = cards.filter(
+  (card) =>
+    card.german.toLowerCase().includes(search.toLowerCase()) ||
+    card.english.toLowerCase().includes(search.toLowerCase())
+);
+
+const currentCard = filteredCards[currentIndex];
+
 
 const deleteFlashcard = async () => {
   if (!currentCard) return;
@@ -98,6 +106,24 @@ const speakGerman = () => {
       <h1 className="text-3xl font-bold mb-6">
         📚 My Vocabulary
       </h1>
+      <input
+  type="text"
+  placeholder="🔍 Search vocabulary..."
+  value={search}
+  onChange={(e) => setSearch(e.target.value)}
+  className="
+    mb-6
+    w-full
+    rounded-2xl
+    border
+    border-glass-border
+    bg-white/[0.03]
+    px-4
+    py-3
+    outline-none
+    focus:border-neon/40
+  "
+/>
       {cards.length > 0 && (
   <div
   className="
