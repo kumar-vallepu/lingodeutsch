@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from ai.memory import conversation_history
 
 load_dotenv()
-print("API KEY FOUND:", bool(os.getenv("GROQ_API_KEY")))
+
 
 client = Groq(
     api_key=os.getenv("GROQ_API_KEY")
@@ -50,11 +50,6 @@ GERMAN:
 ENGLISH:
 <English translation>
 
-QUESTION_GERMAN:
-<German follow-up question>
-
-QUESTION_ENGLISH:
-<English follow-up question>
 
 10. NEVER combine German and English in the same paragraph.
 
