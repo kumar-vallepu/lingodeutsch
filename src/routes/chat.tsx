@@ -22,6 +22,9 @@ const initial: Msg[] = [
   { role: "ai", content: { correction: "Ich gehe zur Schule.", en: "I am going to school.", tip: '"gehen" → "gehe" (ich form). Add "zur" before destinations.' } },
 ];
 
+
+
+
 const histories = [
   { id: 1, title: "Daily greetings", time: "Today", active: true },
   { id: 2, title: "At the bakery", time: "Today" },
@@ -41,6 +44,8 @@ function ChatPage() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+  const [voiceMode, setVoiceMode] = useState(false);
+const recognitionRef = useRef<any>(null);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -51,6 +56,18 @@ function ChatPage() {
     behavior: "smooth"
   });
 }, [messages, typing]);
+
+useEffect(() => {
+  if (voiceMode) {
+    startVoiceConversation();
+  } else {
+    recognitionRef.current?.stop();
+  }
+}, [voiceMode]);
+
+
+
+
 
   useEffect(() => {
 
@@ -267,6 +284,44 @@ const speakText = (text: string) => {
 
   window.speechSynthesis.speak(speech);
 };
+
+const startVoiceConversation = () => {
+  const SpeechRecognition =
+    (window as any).SpeechRecognition ||
+    (window as any).webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    toast.error("Speech Recognition not supported");
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+
+  recognition.lang = "de-DE";
+  recognition.continuous = false;
+  recognition.interimResults = false;
+
+  recognitionRef.current = recognition;
+
+  recognition.onresult = async (event: any) => {
+    const transcript =
+      event.results[event.results.length - 1][0].transcript;
+
+    setInput(transcript);
+
+    setInput(transcript);
+
+setTimeout(() => {
+  send();
+}, 100);
+  };
+
+  recognition.start();
+};
+
+
+
+
 return (
     <div className="relative min-h-screen">
       <Background />
@@ -310,6 +365,35 @@ return (
               </button>
             </div>
            <div className="mt-3 space-y-2">
+  
+<button
+  onClick={() => setVoiceMode(!voiceMode)}
+  className={`
+    w-full
+    rounded-xl
+    px-4
+    py-2
+    text-sm
+    font-medium
+    transition-all
+    duration-300
+    ${
+      voiceMode
+        ? "bg-red-500 text-white shadow-lg shadow-red-500/20"
+        : "border border-glass-border bg-white/[0.03] text-muted-foreground hover:bg-white/[0.06] hover:text-white"
+    }
+  `}
+>
+  {voiceMode
+    ? "🛑 End Voice Mode"
+    : "🎙 Conversation Mode"}
+</button>
+  
+  
+  
+  
+  
+  
   <button
     onClick={() => {
       window.location.href = "/flashcards";
