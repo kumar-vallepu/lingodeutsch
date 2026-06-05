@@ -15,16 +15,6 @@ export const Route = createFileRoute("/chat")({
 
 type Msg = { role: "user" | "ai"; content: any };
 
-const initial: Msg[] = [
-  { role: "user", content: "I want to learn German." },
-  { role: "ai", content: { de: "Ich möchte Deutsch lernen.", en: "I want to learn German." } },
-  { role: "user", content: "Ich gehen Schule" },
-  { role: "ai", content: { correction: "Ich gehe zur Schule.", en: "I am going to school.", tip: '"gehen" → "gehe" (ich form). Add "zur" before destinations.' } },
-];
-
-
-
-
 const histories = [
   { id: 1, title: "Daily greetings", time: "Today", active: true },
   { id: 2, title: "At the bakery", time: "Today" },
@@ -35,7 +25,6 @@ const histories = [
 ];
 
 function ChatPage() {
-  const [messages, setMessages] = useState<Msg[]>(initial);
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
   const [listening, setListening] = useState(false);
@@ -46,6 +35,7 @@ function ChatPage() {
   const navigate = useNavigate();
   const [voiceMode, setVoiceMode] = useState(false);
 const recognitionRef = useRef<any>(null);
+const [messages, setMessages] = useState<Msg[]>([]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -429,9 +419,9 @@ return (
                 <span className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full bg-neon ring-2 ring-card animate-pulse" />
               </div>
               <div>
-                <p className="font-display text-sm font-semibold tracking-tight">Lukas · German Tutor</p>
+                <p className="font-display text-sm font-semibold tracking-tight">LingoDeutsch AI</p>
                 <p className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                  <Sparkles className="size-3 text-neon" /> Adaptive · B1 level · Online
+                  <Sparkles className="size-3 text-neon" /> Personal German Tutor
                 </p>
               </div>
             </div>
@@ -449,9 +439,54 @@ return (
           </header>
 
           <div ref={scrollRef} className="relative flex-1 space-y-4 overflow-y-auto px-4 py-6 sm:px-6">
-            {messages.map((m, i) => (
-              <ChatMsg key={i} msg={m} />
-            ))}
+            
+            {messages.length === 0 ? (
+  <div className="flex h-full items-center justify-center">
+    <div className="max-w-xl text-center">
+      <h1 className="font-display text-4xl font-bold">
+        🇩🇪 Welcome to LingoDeutsch
+      </h1>
+
+      <p className="mt-3 text-muted-foreground">
+        Practice German through conversations,
+        corrections, pronunciation, and vocabulary building.
+      </p>
+
+      <div className="mt-6 flex flex-wrap justify-center gap-2">
+        <button
+          onClick={() =>
+            setInput("I want to learn German greetings")
+          }
+          className="glass rounded-xl px-4 py-2 text-sm"
+        >
+          👋 German Greetings
+        </button>
+
+        <button
+          onClick={() =>
+            setInput("Help me order food in German")
+          }
+          className="glass rounded-xl px-4 py-2 text-sm"
+        >
+          🍽 Restaurant Practice
+        </button>
+
+        <button
+          onClick={() =>
+            setInput("Teach me German grammar")
+          }
+          className="glass rounded-xl px-4 py-2 text-sm"
+        >
+          📖 Grammar Help
+        </button>
+      </div>
+    </div>
+  </div>
+) : (
+  messages.map((m, i) => (
+    <ChatMsg key={i} msg={m} />
+  ))
+)}
             <AnimatePresence>
               {typing && (
                 <motion.div

@@ -33,3 +33,10 @@ dist-ssr
 
 .env
 .env.*
+
+# Backend secrets
+backend/.env
+
+# Python cache
+__pycache__/
+*.pyc

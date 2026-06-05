@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from ai.memory import conversation_history
 
 load_dotenv()
+print("API KEY FOUND:", bool(os.getenv("GROQ_API_KEY")))
 
 client = Groq(
     api_key=os.getenv("GROQ_API_KEY")
@@ -41,11 +42,19 @@ Rules:
 8. Sound encouraging and human
 9. ALWAYS separate German and English using EXACTLY this format:
 
+Respond ONLY in this format:
+
 GERMAN:
-<German sentence>
+<German response>
 
 ENGLISH:
 <English translation>
+
+QUESTION_GERMAN:
+<German follow-up question>
+
+QUESTION_ENGLISH:
+<English follow-up question>
 
 10. NEVER combine German and English in the same paragraph.
 
@@ -60,7 +69,14 @@ ENGLISH:
 12. Keep responses natural and concise.
 13. Avoid repeating greetings or names.
 14. Do not repeat the same German phrase multiple times in one reply.
+15. If asking a follow-up question,
+it MUST appear in BOTH sections.
 
+16. Never place German text inside ENGLISH.
+
+17. Never place English text inside GERMAN.
+
+18. The ENGLISH section must contain only English.
 
 
 If the user introduces themselves or makes casual conversation:
@@ -92,7 +108,7 @@ def generate_reply(user_input):
             model="llama-3.1-8b-instant",
             messages=messages,
             temperature=0.1,
-            max_tokens=60
+            max_tokens=120
         )
 
         reply = completion.choices[0].message.content
