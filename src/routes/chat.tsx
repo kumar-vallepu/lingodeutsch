@@ -36,6 +36,8 @@ function ChatPage() {
   const [voiceMode, setVoiceMode] = useState(false);
 const recognitionRef = useRef<any>(null);
 const [messages, setMessages] = useState<Msg[]>([]);
+const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
+const [conversations, setConversations] = useState<any[]>([]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -55,7 +57,9 @@ useEffect(() => {
   }
 }, [voiceMode]);
 
-
+useEffect(() => {
+  loadConversations();
+}, []);
 
 
 
@@ -106,7 +110,31 @@ const send = async () => {
   setTyping(true);
 
   const text = input.trim();
+  if (
+  currentConversationId &&
+  messages.length === 0
+) {
+  await supabase
+    .from("conversations")
+    .update({
+      title:
+        text.length > 40
+          ? text.slice(0, 40) + "..."
+          : text,
+    })
+    .eq("id", currentConversationId);
 
+  loadConversations();
+}
+if (currentConversationId) {
+  await supabase.from("messages").insert([
+    {
+      conversation_id: currentConversationId,
+      role: "user",
+      content: text,
+    },
+  ]);
+}
   setMessages((m) => [
     
     ...m,
@@ -186,6 +214,19 @@ ENGLISH: ${m.content.en || ""}`,
         },
       },
     ]);
+
+    if (currentConversationId) {
+  await supabase.from("messages").insert([
+    {
+      conversation_id: currentConversationId,
+      role: "assistant",
+      content: JSON.stringify({
+        de: german,
+        en: english,
+      }),
+    },
+  ]);
+}
     speakText(german);
     setTimeout(() => {
       inputRef.current?.focus();
@@ -309,9 +350,82 @@ setTimeout(() => {
   recognition.start();
 };
 
+const createNewConversation = async () => {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
+  if (!user) return;
 
+  const { data, error } = await supabase
+    .from("conversations")
+    .insert([
+      {
+        user_id: user.id,
+        title: "New Conversation",
+      },
+    ])
+    .select()
+    .single();
 
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  setCurrentConversationId(data.id);
+  loadConversations();
+  setMessages([]);
+};
+
+const loadConversations = async () => {
+  const { data, error } = await supabase
+    .from("conversations")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  setConversations(data || []);
+};
+
+const loadMessages = async (
+  conversationId: string
+) => {
+  const { data, error } = await supabase
+    .from("messages")
+    .select("*")
+    .eq("conversation_id", conversationId)
+    .order("created_at", {
+      ascending: true,
+    });
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+ const formattedMessages: Msg[] = data.map(
+  (msg) => ({
+    role:
+      msg.role === "assistant"
+        ? ("ai" as const)
+        : ("user" as const),
+
+    content:
+      msg.role === "assistant"
+        ? JSON.parse(msg.content)
+        : msg.content,
+  })
+);
+  setMessages(formattedMessages);
+  setCurrentConversationId(
+    conversationId
+  );
+};
 return (
     <div className="relative min-h-screen">
       <Background />
@@ -319,19 +433,27 @@ return (
         {/* Sidebar */}
         <aside className="glass-strong border-gradient hidden w-72 shrink-0 flex-col rounded-3xl p-4 md:flex">
           <Logo />
-          <button className="btn-primary-glow mt-5 inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.01] active:scale-[0.99]">
-            <Plus className="size-4" /> New conversation
-          </button>
+         <button
+  onClick={createNewConversation}
+  className="btn-primary-glow mt-5 inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.01] active:scale-[0.99]"
+>
+  <Plus className="size-4" />
+  New conversation
+</button>
+          
           <p className="mt-7 px-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">History</p>
           <div className="mt-2 flex-1 space-y-1 overflow-y-auto pr-1">
-            {histories.map((h) => (
+            {conversations.map((h) => (
               <button
                 key={h.id}
+                onClick={() =>
+  loadMessages(h.id)
+}
                 className={`group flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-sm transition-all ${
-                  h.active ? "bg-white/[0.06] ring-1 ring-glass-border" : "hover:bg-white/[0.04]"
+                  currentConversationId === h.id ? "bg-white/[0.06] ring-1 ring-glass-border" : "hover:bg-white/[0.04]"
                 }`}
               >
-                <MessageSquare className={`size-4 ${h.active ? "text-neon" : "text-muted-foreground group-hover:text-neon"}`} />
+                <MessageSquare className={`size-4 ${currentConversationId === h.id? "text-neon" : "text-muted-foreground group-hover:text-neon"}`} />
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-medium">{h.title}</p>
                   <p className="text-[10px] text-muted-foreground">{h.time}</p>
