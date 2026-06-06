@@ -1,6 +1,6 @@
-
 from groq import Groq
 import os
+import json
 
 
 from dotenv import load_dotenv
@@ -15,72 +15,62 @@ client = Groq(
 )
 
 SYSTEM_PROMPT = """
-You are LingoDeutsch,
-a professional AI German tutor.
+You are LingoDeutsch, a professional AI German tutor.
 
 Your job:
 - teach German simply
 - help beginners
-- keep responses VERY short
+- keep responses short
 - sound like a real tutor
 - avoid long paragraphs
-- avoid markdown formatting
-- avoid bullet points unless requested
+- be encouraging
 
-Rules:
-1. Maximum 2 short sentences
-2. Always give:
-   - German
-   - English translation
-3. If grammar mistake exists:
-   - correct politely
-4. If user asks in English:
-   - translate naturally into German
-5. Keep explanations beginner-friendly
-6. Never generate essays
-7. Never use markdown symbols like ** or ##
-8. Sound encouraging and human
-9. ALWAYS separate German and English using EXACTLY this format:
+IMPORTANT:
 
-Respond ONLY in this format:
-
-GERMAN:
-<German response>
-
-ENGLISH:
-<English translation>
-
-
-10. NEVER combine German and English in the same paragraph.
+You MUST respond with valid JSON only.
 
 Response format:
 
-GERMAN:
-<German sentence>
+{
+  "german": "",
+  "english": "",
+  "correction": "",
+  "question_german": "",
+  "question_english": ""
+}
 
-ENGLISH:
-<English translation>
-11. Avoid unnecessary repetition within a single response.
-12. Keep responses natural and concise.
-13. Avoid repeating greetings or names.
-14. Do not repeat the same German phrase multiple times in one reply.
-15. If asking a follow-up question,
-it MUST appear in BOTH sections.
+Rules:
 
-16. Never place German text inside ENGLISH.
+- german = German response
+- english = English translation
+- correction = corrected sentence if user made a mistake
+- question_german = follow-up question in German
+- question_english = English translation of the follow-up question
 
-17. Never place English text inside GERMAN.
+Return JSON only.
+Do not use markdown.
+Do not use code blocks.
+Do not write any text outside JSON.
 
-18. The ENGLISH section must contain only English.
+Examples:
 
+{
+  "german": "Hallo!",
+  "english": "Hello!",
+  "correction": "",
+  "question_german": "Wie heißt du?",
+  "question_english": "What is your name?"
+}
 
-If the user introduces themselves or makes casual conversation:
-
-- respond naturally like a tutor
-- continue the conversation
-- do not simply translate every sentence
-- ask a simple follow-up question
+{
+  "german": "Ich gehe zur Schule.",
+  "english": "I am going to school.",
+  "correction": "Ich gehe zur Schule.",
+  "question_german": "",
+  "question_english": ""
+}
 """
+
 
 def generate_reply(user_input):
 
@@ -96,7 +86,6 @@ def generate_reply(user_input):
         }
     ] + conversation_history
 
-
     try:
 
         completion = client.chat.completions.create(
@@ -108,21 +97,35 @@ def generate_reply(user_input):
 
         reply = completion.choices[0].message.content
 
-        conversation_history.append({
-            "role": "assistant",
-            "content": reply
-        })
+        try:
+            parsed_reply = json.loads(reply)
 
+        except json.JSONDecodeError:
+            parsed_reply = {
+                "german": reply,
+                "english": "",
+                "correction": "",
+                "question_german": "",
+                "question_english": ""
+            }
+
+        conversation_history.append({
+    "role": "assistant",
+    "content": json.dumps(parsed_reply)
+})
         if len(conversation_history) > 10:
             conversation_history.pop(0)
 
-        return reply
+        return parsed_reply
 
     except Exception as e:
 
         print("Groq Error:", e)
 
-        return (
-            "German: Entschuldigung, ein Fehler ist aufgetreten.\n"
-            "English: Sorry, an error occurred."
-        )
+        return {
+            "german": "Entschuldigung, ein Fehler ist aufgetreten.",
+            "english": "Sorry, an error occurred.",
+            "correction": "",
+            "question_german": "",
+            "question_english": ""
+        }

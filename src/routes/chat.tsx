@@ -101,15 +101,11 @@ if (fullName) {
 
 }, []);
 
-const send = async () => {
+const sendMessage = async (text: string) => {
 
   if (typing) return;
 
-  if (!input.trim()) return;
-
   setTyping(true);
-
-  const text = input.trim();
   if (
   currentConversationId &&
   messages.length === 0
@@ -135,19 +131,14 @@ if (currentConversationId) {
     },
   ]);
 }
+
   setMessages((m) => [
-    
     ...m,
-    
     {
       role: "user",
       content: text,
     },
   ]);
-  
-
-
-  setInput("");
 
   try {
 
@@ -155,14 +146,16 @@ if (currentConversationId) {
       `${import.meta.env.VITE_API_URL}/chat`,
       {
         method: "POST",
-
         headers: {
           "Content-Type": "application/json",
         },
 
         body: JSON.stringify({
           messages: messages.map((m) => ({
-            role: m.role === "ai" ? "assistant" : "user",
+            role:
+              m.role === "ai"
+                ? "assistant"
+                : "user",
 
             content:
               typeof m.content === "string"
@@ -183,39 +176,35 @@ ENGLISH: ${m.content.en || ""}`,
     const data = await response.json();
 
     const reply = data.reply;
+    const german =
+  reply.german || "";
 
-    let german = "";
-    let english = "";
+const english =
+  reply.english || "";
 
-    if (reply.includes("ENGLISH:")) {
+const correction =
+  reply.correction || "";
 
-      german = reply
-        .split("ENGLISH:")[0]
-        .replace("GERMAN:", "")
-        .trim();
+const questionGerman =
+  reply.question_german || "";
 
-      english = reply
-        .split("ENGLISH:")[1]
-        .trim();
-
-    } else {
-
-      german = reply;
-    }
-
+const questionEnglish =
+  reply.question_english || "";
+    
     setMessages((m) => [
-      ...m,
-      {
-        role: "ai",
-
-        content: {
-          de: german,
-          en: english,
-        },
-      },
-    ]);
-
-    if (currentConversationId) {
+  ...m,
+  {
+    role: "ai",
+    content: {
+      de: german,
+      en: english,
+      correction,
+      questionGerman,
+      questionEnglish,
+    },
+  },
+]);
+if (currentConversationId) {
   await supabase.from("messages").insert([
     {
       conversation_id: currentConversationId,
@@ -228,25 +217,10 @@ ENGLISH: ${m.content.en || ""}`,
   ]);
 }
     speakText(german);
-    setTimeout(() => {
-      inputRef.current?.focus();
-    }, 0);
 
   } catch (error) {
 
     console.error(error);
-
-    setMessages((m) => [
-      ...m,
-      {
-        role: "ai",
-
-        content: {
-          de: "Es gibt ein Problem.",
-          en: "There is a problem connecting to the server.",
-        },
-      },
-    ]);
 
   } finally {
 
@@ -254,26 +228,35 @@ ENGLISH: ${m.content.en || ""}`,
   }
 };
 
-const startListening = () => {
+const send = async () => {
+  if (!input.trim()) return;
+
+  const text = input.trim();
+
+  setInput("");
+
+  await sendMessage(text);
+};
+
+  
+ const startListening = () => {
 
   const SpeechRecognition =
     (window as any).SpeechRecognition ||
     (window as any).webkitSpeechRecognition;
 
   if (!SpeechRecognition) {
-
     alert("Speech Recognition not supported");
-
     return;
   }
 
   const recognition = new SpeechRecognition();
 
-  recognition.lang = "de-DE";
+  recognitionRef.current = recognition;
 
+  recognition.lang = "en-US";
   recognition.interimResults = false;
   recognition.continuous = false;
-
   recognition.maxAlternatives = 1;
 
   setListening(true);
@@ -285,34 +268,52 @@ const startListening = () => {
     const transcript =
       event.results[0][0].transcript;
 
-    setInput(transcript);
+    sendMessage(transcript);
 
     setListening(false);
   };
 
   recognition.onerror = () => {
-
     setListening(false);
   };
 
   recognition.onend = () => {
-
     setListening(false);
   };
 };
 
-const speakText = (text: string) => {
- window.speechSynthesis.cancel();
-  const speech = new SpeechSynthesisUtterance(text);
+const speakText = (
+  text: string
+) => {
+
+  window.speechSynthesis.cancel();
+
+  const speech =
+    new SpeechSynthesisUtterance(text);
 
   speech.lang = "de-DE";
-
   speech.rate = 0.95;
-
   speech.pitch = 1;
-
   speech.volume = 1;
 
+  speech.onstart = () => {
+    recognitionRef.current?.stop();
+  };
+
+  speech.onend = () => {
+
+    if (voiceMode) {
+      startListening();
+    }
+  };
+speech.onend = () => {
+  console.log("AI finished speaking");
+
+  if (voiceMode) {
+    console.log("Starting listening again");
+    startListening();
+  }
+};
   window.speechSynthesis.speak(speech);
 };
 
@@ -328,24 +329,18 @@ const startVoiceConversation = () => {
 
   const recognition = new SpeechRecognition();
 
-  recognition.lang = "de-DE";
+  recognition.lang = "en-US";
   recognition.continuous = false;
   recognition.interimResults = false;
 
   recognitionRef.current = recognition;
 
-  recognition.onresult = async (event: any) => {
-    const transcript =
-      event.results[event.results.length - 1][0].transcript;
+ recognition.onresult = async (event: any) => {
+  const transcript =
+    event.results[event.results.length - 1][0].transcript;
 
-    setInput(transcript);
-
-    setInput(transcript);
-
-setTimeout(() => {
-  send();
-}, 100);
-  };
+  await sendMessage(transcript);
+};
 
   recognition.start();
 };
@@ -403,29 +398,44 @@ const loadMessages = async (
       ascending: true,
     });
 
-  if (error) {
-    console.error(error);
-    return;
-  }
+ const formattedMessages: Msg[] = data.map((msg) => ({
+  role:
+    msg.role === "assistant"
+      ? ("ai" as const)
+      : ("user" as const),
 
- const formattedMessages: Msg[] = data.map(
-  (msg) => ({
-    role:
-      msg.role === "assistant"
-        ? ("ai" as const)
-        : ("user" as const),
+  content:
+    msg.role === "assistant"
+      ? (() => {
+          try {
+            const parsed = JSON.parse(msg.content);
 
-    content:
-      msg.role === "assistant"
-        ? JSON.parse(msg.content)
-        : msg.content,
-  })
+            return {
+              de: parsed.german || "",
+              en: parsed.english || "",
+              correction: parsed.correction || "",
+              questionGerman:
+                parsed.question_german || "",
+              questionEnglish:
+                parsed.question_english || "",
+            };
+          } catch {
+            return {
+              de: msg.content,
+              en: "",
+            };
+          }
+        })()
+      : msg.content,
+}));
+
+setMessages(formattedMessages);
+
+setCurrentConversationId(
+  conversationId
 );
-  setMessages(formattedMessages);
-  setCurrentConversationId(
-    conversationId
-  );
 };
+
 return (
     <div className="relative min-h-screen">
       <Background />
