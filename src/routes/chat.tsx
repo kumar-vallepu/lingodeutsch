@@ -398,43 +398,73 @@ const loadMessages = async (
       ascending: true,
     });
 
- const formattedMessages: Msg[] = data.map((msg) => ({
-  role:
-    msg.role === "assistant"
-      ? ("ai" as const)
-      : ("user" as const),
+  const formattedMessages: Msg[] = (data ?? []).map((msg) => ({
+    role:
+      msg.role === "assistant"
+        ? ("ai" as const)
+        : ("user" as const),
 
-  content:
-    msg.role === "assistant"
-      ? (() => {
-          try {
-            const parsed = JSON.parse(msg.content);
+   content:
+  msg.role === "assistant"
+    ? (() => {
+        try {
+          const parsed = JSON.parse(msg.content);
 
-            return {
-              de: parsed.german || "",
-              en: parsed.english || "",
-              correction: parsed.correction || "",
-              questionGerman:
-                parsed.question_german || "",
-              questionEnglish:
-                parsed.question_english || "",
-            };
-          } catch {
-            return {
-              de: msg.content,
-              en: "",
-            };
-          }
-        })()
-      : msg.content,
-}));
+          console.log("Assistant parsed:", parsed);
 
-setMessages(formattedMessages);
+          return {
+            type:
+              parsed.type || "conversation",
 
-setCurrentConversationId(
-  conversationId
-);
-};
+            de:
+              parsed.de ||
+              parsed.german ||
+              "",
+
+            en:
+              parsed.en ||
+              parsed.english ||
+              "",
+
+            correction:
+              parsed.correction || "",
+
+            questionGerman:
+              parsed.questionGerman ||
+              parsed.question_german ||
+              "",
+
+            questionEnglish:
+              parsed.questionEnglish ||
+              parsed.question_english ||
+              "",
+          };
+
+        } catch (error) {
+
+          console.error(
+            "JSON parse failed:",
+            msg.content
+          );
+
+          return {
+            type: "conversation",
+            de: msg.content,
+            en: "",
+            correction: "",
+            questionGerman: "",
+            questionEnglish: "",
+          };
+        }
+      })()
+    : msg.content,  
+    }));
+  setMessages(formattedMessages);
+
+  setCurrentConversationId(
+    conversationId
+  );
+  };
 
 return (
     <div className="relative min-h-screen">
