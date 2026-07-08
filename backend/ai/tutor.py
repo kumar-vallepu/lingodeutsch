@@ -133,3 +133,5 @@ def generate_reply(user_input):
             "question_german": "",
             "question_english": ""
         }
+    
+    
