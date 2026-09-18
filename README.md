@@ -457,7 +457,7 @@ Currently exploring opportunities to apply these skills in real-world software d
 
 **GitHub:** [kumar-vallepu](https://github.com/kumar-vallepu)
 
-**Live Project:** [LingoDeutsch](https://lingodeutsch-nine.vercel.app/)
+**Live Project:** [LingoDeutsch](https://lingodeutsch.learnai.workers.dev/)
 
 ---
 
