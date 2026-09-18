@@ -70,7 +70,7 @@ def generate_reply(user_input):
             model="openai/gpt-oss-20b",
             messages=messages,
             temperature=0.0,
-            max_tokens=200
+            max_tokens=400
         )
 
         reply = completion.choices[0].message.content
